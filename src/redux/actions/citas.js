@@ -1,16 +1,24 @@
-import axios from 'axios';
-import {db} from '../../firebase/firebaseConfig'
+import { db } from '../../firebase/firebaseConfig'
 
 export const obtenerCitas = () => {
   return async (dispatch) => {
     try {
-      const resultado = await db.collection('citas').get();
+      const doc = await db.collection('citas').get();
       //const resultado = await axios.get('http://localhost:4000/restaurant');
       console.log('resultado es:');
-      console.log(resultado);
+      console.log(doc);
 
       let citas = [];
-     // citas = resultado.map(item => {return {...item.data, id: item.id}});
+
+      doc.forEach((item) => {
+        citas.push({
+          ...item.data(),
+          id: item.id,
+        })
+      });
+      console.log('citas es:');
+      console.log(citas);
+
 
       dispatch({
         type: 'OBTENER_CITAS',
@@ -39,12 +47,19 @@ export const agregarCita = (cita) => {
 export const obtenerCita = (id) => {
   return async (dispatch) => {
     try {
-      const resultado = await axios.get(
+      const doc = await db.collection('citas').doc(id).get();
+      /*const resultado = await axios.get(
         'http://localhost:4000/restaurant?id=' + id
-      );
+      );*/
+
+      const item = {
+        ...doc.data(),
+        id: doc.id,
+      };
+
       dispatch({
         type: 'OBTENER_CITA',
-        payload: resultado.data[0],
+        payload: item,
       });
     } catch (error) {
       console.log(error);
@@ -55,9 +70,12 @@ export const obtenerCita = (id) => {
 export const editarCita = (cita) => {
   return async (dispatch) => {
     try {
-      await axios.put('http://localhost:4000/restaurant/' + cita.id, {
+      const citaUpdate = { ...cita };
+      delete citaUpdate.id;
+      await db.collection('citas').doc(cita.id).update(citaUpdate);
+      /*await axios.put('http://localhost:4000/restaurant/' + cita.id, {
         ...cita,
-      });
+      });*/
       dispatch({
         type: 'EDITAR_CITA',
         payload: true,
@@ -71,7 +89,8 @@ export const editarCita = (cita) => {
 export const eliminarCita = (id) => {
   return async (dispatch) => {
     try {
-      await axios.delete('http://localhost:4000/restaurant/' + id);
+      await db.collection('citas').doc(id).delete();
+      //await axios.delete('http://localhost:4000/restaurant/' + id);
       dispatch({
         type: 'ELIMINAR_CITA',
         payload: true,
