@@ -40,6 +40,7 @@ const CitaRow = ({ cita }) => {
   const detailCita = (e) => {
     e.preventDefault();
     console.log("consultando...");
+    history.push("/cita/detalle/"+cita.id);
   };
 
   return (
