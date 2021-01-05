@@ -23,12 +23,15 @@ const FormDate = (props) => {
   const [formState, setFormState] = useState(initialState);
 
   useEffect(() => {
-    console.log("hey!");
+    setFormState({...props.cita});
   }, []);
+
   useEffect(() => {
     console.log("formState Change:");
     console.log(formState);
   }, [formState]);
+
+  
 
   const handleInputChange = (e) => {
      if(e.target){

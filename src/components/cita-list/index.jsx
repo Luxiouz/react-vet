@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { eliminarCita, obtenerCitas } from "../../redux/actions/citas";
+import CitaRow from "../cita-row";
 
 const CitaList = () => {
   const dispatch = useDispatch();
@@ -10,9 +11,12 @@ const CitaList = () => {
     dispatch(obtenerCitas());
   }, []);
 
-  const deleteCita = (id)=>{
-     dispatch(eliminarCita(id));
-  }
+  useEffect(() => {
+   if (deleteOk) {
+     dispatch(obtenerCitas());
+   }
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [deleteOk]);
 
   return (
     <div>
@@ -28,23 +32,9 @@ const CitaList = () => {
           </tr>
         </thead>
         <tbody>
-          {listaCitas.map((cita) => {
-            console.log(cita);
-            return (
-              <tr>
-                <td>{cita.ownerName}</td>
-                <td>{cita.petName}</td>
-                <td>{cita.Service}</td>
-                <td>{cita.date}</td>
-                <td>{cita.hour}</td>
-                <td className="d-flex justify-content-end">
-                  <button className="my-0 btn btn-success">Ver detalle</button>
-                  <button className="my-0 mx-2 btn btn-warning" onClick={deleteCita(cita.id)}>Editar</button>
-                  <button className="my-0 btn btn-danger">Eliminar</button>
-                </td>
-              </tr>
-            );
-          })}
+          {listaCitas.map((cita) => 
+            <CitaRow cita={cita} key={cita.id}></CitaRow>
+          )}
         </tbody>
       </table>
     </div>
